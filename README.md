@@ -3,7 +3,7 @@ https://start.spring.io/
 # asa-user-crud-demo
     Spring boot user crud démo
     https://github.com/asa-7670/asa-user-crud-demo
-## Feature 1: Say hello
+### Feature 1: Say hello
     Develop an api that displays hello <username>
 ### Dependencies:
     spring-boot-starter-web
@@ -46,3 +46,17 @@ https://start.spring.io/
     - @Max
     - @JsonFormat
     - Custom error message 
+### Feature 3: Entity: User Crud with repository
+### Dependencies
+    - spring-boot-starter-data-jp
+    - com.h2database:h2
+### Concept to see
+    - @Entity
+    - @Table
+    - @Id
+    - @Column
+    - @Transient
+    - @JsonProperty
+    - H2
+
+    H2 access : http://localhost:8080/h2-console

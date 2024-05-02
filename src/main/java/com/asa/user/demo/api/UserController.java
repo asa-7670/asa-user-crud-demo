@@ -1,9 +1,11 @@
 package com.asa.user.demo.api;
 
-import com.asa.user.demo.dto.UserDto;
+import com.asa.user.demo.model.UserEntity;
 import com.asa.user.demo.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.apache.catalina.User;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
@@ -45,20 +47,55 @@ public class UserController {
 
     /**
      * addUser
-     * @param userDto UserDto
-     * @return ResponseEntity<UserDto>
+     * @param userDto UserEntity
+     * @return ResponseEntity<UserEntity>
      */
     @PostMapping
-    public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserDto userDto) {
-        return ResponseEntity.ok(this.userService.addUser(userDto));
+    public ResponseEntity<UserEntity> addUser(@RequestBody @Valid UserEntity userDto) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(this.userService.addUser(userDto));
     }
 
     /**
      * users
-     * @return ResponseEntity<Set<UserDto>>
+     * @return ResponseEntity<Set<UserEntity>>
      */
     @GetMapping
-    public ResponseEntity<Set<UserDto>> users() {
+    public ResponseEntity<Set<UserEntity>> users() {
         return ResponseEntity.ok().body(this.userService.getUsers());
     }
+
+    /**
+     * getUserById
+     * @param id Long
+     * @return ResponseEntity<UserEntity>
+     */
+    @GetMapping("{id}")
+    public ResponseEntity<UserEntity> getUserById(@PathVariable @NotNull Long id) {
+        return ResponseEntity.ofNullable(this.userService.getUserById(id).get());
+    }
+
+    /**
+     * deleteUserById
+     * @param id Long
+     * @return ResponseEntity<Void>
+     */
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteUserById(@PathVariable @NotNull Long id) {
+        this.userService.deleteUserById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     *
+     * @param userDto UserEntity
+     * @return ResponseEntity<Void>
+     */
+    @PatchMapping
+    public ResponseEntity<Void> updateUser(@RequestBody @Valid UserEntity userDto) {
+        this.userService.updateUser(userDto);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }

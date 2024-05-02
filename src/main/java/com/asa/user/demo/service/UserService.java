@@ -1,19 +1,19 @@
 package com.asa.user.demo.service;
 
-import com.asa.user.demo.dto.UserDto;
-import org.apache.catalina.User;
+import com.asa.user.demo.model.UserEntity;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 public interface UserService {
 
-    Set<UserDto> getUsers();
+    Set<UserEntity> getUsers();
 
-    UserDto addUser(UserDto userDto);
+    UserEntity addUser(UserEntity userEntity);
 
-    Optional<User> getUserById(String id);
+    Optional<UserEntity> getUserById(Long id);
 
-    void deleteUserById(String id);
+    void deleteUserById(Long id);
+
+    void updateUser(UserEntity userEntity);
 }
