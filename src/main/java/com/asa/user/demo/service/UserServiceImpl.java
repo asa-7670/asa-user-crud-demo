@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Constructor
-     * @param userRepository
+     * @param userRepository UserRepository
      */
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -37,8 +37,8 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * @param userDto
-     * @return UserDto
+     * @param userDto UserEntity
+     * @return UserEntity
      */
     @Override
     public UserEntity addUser(UserEntity userDto) {
@@ -47,8 +47,8 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * @param id
-     * @return
+     * @param id Long
+     * @return Optional<UserEntity>
      */
     @Override
     public Optional<UserEntity> getUserById(Long id) {
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * @param id
+     * @param id Long
      */
     @Override
     public void deleteUserById(Long id) {
@@ -69,20 +69,34 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * @param userEntity
+     * @param userEntity UserEntity
      */
     @Override
-    public void updateUser(UserEntity userEntity) {
+    public void updateUser(Long id, UserEntity userEntity) {
+        Assert.notNull(id, "userId is required");
         Assert.notNull(userEntity, "userEntity is required");
-        Assert.notNull(userEntity.getId(), "userId is required");
         //Check exist user
-        Optional<UserEntity> foundUser = foundUserById(userEntity.getId());
+        Optional<UserEntity> foundUser = foundUserById(id);
         //check user email
-        if(!foundUser.get().getEmail().equals(userEntity.getEmail())) {
+        if(foundUser.isPresent() && !foundUser.get().getEmail().equals(userEntity.getEmail())) {
             throw new IllegalStateException("The user's email address cannot be modified");
         }
         //update user
         this.userRepository.save(userEntity);
+    }
+
+    /**
+     * @param email String
+     * @return Optional<UserEntity>
+     */
+    @Override
+    public Optional<UserEntity> findUserByEmail(String email) {
+        Assert.hasText(email, "email is required");
+        Optional<UserEntity> foundUser =  this.userRepository.findByEmail(email);
+        if(foundUser.isEmpty()){
+            throw new EntityNotFoundException(String.format("No users found with email [%s]", email));
+        }
+        return foundUser;
     }
 
     /**

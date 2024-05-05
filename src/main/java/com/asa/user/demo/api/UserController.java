@@ -2,8 +2,8 @@ package com.asa.user.demo.api;
 
 import com.asa.user.demo.model.UserEntity;
 import com.asa.user.demo.service.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +31,7 @@ public class UserController {
 
     /**
      * sayHello
+     * GET: <host>:<port>/api/v1/users/<user name>
      * @param username String
      * @return ResponseEntity<String>
      */
@@ -47,6 +48,7 @@ public class UserController {
 
     /**
      * addUser
+     * POST: <host>:<port>/api/v1/users
      * @param userDto UserEntity
      * @return ResponseEntity<UserEntity>
      */
@@ -59,6 +61,7 @@ public class UserController {
 
     /**
      * users
+     * GET: <host>:<port>/api/v1/users
      * @return ResponseEntity<Set<UserEntity>>
      */
     @GetMapping
@@ -68,34 +71,48 @@ public class UserController {
 
     /**
      * getUserById
+     * GET: <host>:<port>/api/v1/users/user/<user id>
      * @param id Long
      * @return ResponseEntity<UserEntity>
      */
-    @GetMapping("{id}")
+    @GetMapping("/user/{id}")
     public ResponseEntity<UserEntity> getUserById(@PathVariable @NotNull Long id) {
         return ResponseEntity.ofNullable(this.userService.getUserById(id).get());
     }
 
     /**
      * deleteUserById
+     * DELETE: <host>:<port>/api/v1/users/user/<user id>
      * @param id Long
      * @return ResponseEntity<Void>
      */
-    @DeleteMapping("{id}")
+    @DeleteMapping("/user/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable @NotNull Long id) {
         this.userService.deleteUserById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
-     *
+     * updateUser
+     * PATCH: <host>:<port>/api/v1/users/user/<user id>
      * @param userDto UserEntity
      * @return ResponseEntity<Void>
      */
-    @PatchMapping
-    public ResponseEntity<Void> updateUser(@RequestBody @Valid UserEntity userDto) {
-        this.userService.updateUser(userDto);
+    @PatchMapping("/user/{id}")
+    public ResponseEntity<Void> updateUser(@PathVariable @NotNull Long id, @RequestBody @Valid UserEntity userDto) {
+        this.userService.updateUser(id, userDto);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * findUserByEmail
+     * GET: <host>:<port>/api/v1/users/user?email=<email>
+     * @param email String
+     * @return ResponseEntity<UserEntity>
+     */
+    @GetMapping("/user")
+    public ResponseEntity<UserEntity> findUserByEmail(@RequestParam @NotBlank String email) {
+       return ResponseEntity.ok().body(this.userService.findUserByEmail(email).get());
     }
 
 }
