@@ -72,3 +72,6 @@ https://start.spring.io/
 #### Concept to see
     - @RequestParam
     - @NotBlank
+### Feature 5: Error Handling for REST
+#### Concept to see
+    - @RestControllerAdvice

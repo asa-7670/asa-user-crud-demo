@@ -36,7 +36,8 @@ public class UserEntity {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
     @Column(name = "USR_USERNAME", length = 50, nullable = false, unique = true)
-    @Email(message="error.user.email.required")
+    @NotBlank(message="error.user.email.required")
+    @Email(message="error.user.email.not.valid")
     @JsonProperty("mail")
     private String email;
     @Transient
