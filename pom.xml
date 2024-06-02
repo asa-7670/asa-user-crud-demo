@@ -79,7 +79,7 @@
     </dependencies>
 
     <build>
-        <finalName>${artifactId}.jar</finalName>
+        <finalName>${project.artifactId}.jar</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
