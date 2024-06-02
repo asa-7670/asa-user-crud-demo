@@ -1,6 +1,6 @@
 version: '3.9'
 services:
   user_crud_demo_service:
-    image: 'asaidi/asa-user-crud-demo-'
+    image: 'asaidi/asa-user-crud-demo'
     ports:
       - 8181:8181
