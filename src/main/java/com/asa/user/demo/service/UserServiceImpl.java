@@ -1,8 +1,10 @@
 package com.asa.user.demo.service;
 
+import com.asa.user.demo.dto.UserDto;
 import com.asa.user.demo.model.UserEntity;
 import com.asa.user.demo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -12,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     /**
@@ -31,9 +34,16 @@ public class UserServiceImpl implements UserService {
      * @return Set<UserDto>
      */
     @Override
-    public Set<UserEntity> getUsers() {
+    public Set<UserDto> getUsers() {
         List<UserEntity> users = this.userRepository.findAll();
-        return new HashSet<>(users);
+        log.info("Users size: {}", users.size());
+        return new HashSet<>(users.stream().map(user -> {
+            return UserDto.builder()
+                    .fullName(user.getFullName())
+                    .id(user.getId())
+                    .build();
+            }).toList()
+        );
     }
 
     /**
@@ -43,6 +53,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity addUser(UserEntity userDto) {
         Assert.notNull(userDto, "userDto is required");
+        log.info("Add user: {}", userDto.getFullName());
         return this.userRepository.save(userDto);
     }
 
@@ -52,7 +63,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Optional<UserEntity> getUserById(Long id) {
-        Assert.notNull(id, "user id  is required");
+        Assert.notNull(id, "user id is required");
+        log.info("Search user by id: {}", id);
         return foundUserById(id);
     }
 
@@ -61,10 +73,11 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void deleteUserById(Long id) {
-        Assert.notNull(id, "user id  is required");
+        Assert.notNull(id, "user id is required");
         //Check user exist
         foundUserById(id);
         //deleteById user
+        log.info("Delete user with id: {}", id);
         this.userRepository.deleteById(id);
     }
 
@@ -82,6 +95,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("The user's email address cannot be modified");
         }
         //update user
+        log.info("Update user {}", userEntity);
         this.userRepository.save(userEntity);
     }
 

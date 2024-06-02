@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Mes premiers pas avec Vue 3</title>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/webjars/font-awesome/css/all.min.css" rel="stylesheet" type="text/css" >
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+
+</head>
+<body>
+    <main  class="container" id="app" v-cloak>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <i class="fa-solid fa-rocket"></i>
+                    User Crud Demo
+                </a>
+            </div>
+        </nav>
+        <div class="row mt-3">
+            <!-- users -->
+            <div class="col-4">
+                <div class="d-flex justify-content-center" v-if="loading">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div v-if="users.length < 1">
+                    {{noUserMessage}}
+                </div>
+                <div class="card" v-else>
+                    <div class="card-header d-flex">
+                        <h5 class="flex-grow-1">
+                            Users
+                            <span class="badge bg-danger">{{users.length}}</span>
+                        </h5>
+                        <button type="button"
+                                v-show="formDisabled"
+                                @Click="addUserBtn"
+                                data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                title="Add user"
+                                class="btn btn-light"><i class="fa-solid fa-user-plus"></i></button>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <button
+                                type="button"
+                                v-for="user in users" :key="user.id"
+                                @click="searchUserBtn(user.id)"
+                                class="list-group-item list-group-item-action">{{user.fullName }}</button>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- user -->
+            <div class="col-8">
+                <div v-show="openAlertBox" class="alert alert-success" role="alert">
+                    <span>{{alertMessage}}</span>
+                    <button
+                            type="button"
+                            aria-label="Close"
+                            class="btn-close float-end"
+                            @Click="closeAlertBoxBtn"></button>
+                </div>
+                <div class="card" v-show="openForm">
+                    <div class="card-header d-flex flex-row-reverse">
+                        <div class="btn-group">
+                            <button
+                                    type="button"
+                                    @Click="editUserBtn"
+                                    v-show="formDisabled"
+                                    data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                    title="Edit user"
+                                    class="btn btn-light"><i class="fa-solid fa-user-pen"></i></button>
+                            <button
+                                    type="button"
+                                    v-show="formDisabled"
+                                    data-bs-toggle="modal" data-bs-target="#ConfirmModal"
+                                    @click="deleteUserBtn"
+                                    data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                    title="Delete user"
+                                    class="btn btn-light"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form novalidate>
+                            <fieldset :disabled="formDisabled">
+                                <div class="input-group flex-nowrap mb-3">
+                                    <span class="input-group-text w-25">Civility<span class="text-danger mr-1">*</span></span>
+                                    <select class="form-select" name="civility" v-model="userForm.civility">
+                                        <option value="Mr">Monsieur</option>
+                                        <option value="Mrs">Madame</option>
+                                        <option value="Ms">Mademoiselle</option>
+                                    </select>
+                                </div>
+                                <div class="input-group flex-nowrap mb-3">
+                                    <span class="input-group-text w-25">Firstname<span class="text-danger mr-1">*</span></span>
+                                    <input type="text"
+                                           class="form-control"
+                                           :class="errors.firstnameClass"
+                                           id="firstnameInput" name="firstname"
+                                           v-model.trim="userForm.firstname"
+                                           maxlength="10"
+                                           required>
+                                </div>
+                                <div class="input-group flex-nowrap mb-3">
+                                    <span class="input-group-text w-25">Lastname<span class="text-danger mr-1">*</span></span>
+                                    <input type="text"
+                                           class="form-control"
+                                           :class="errors.lastnameClass"
+                                           id="lastnameInput" name="lastname"
+                                           v-model.trim="userForm.lastname"
+                                           maxlength="50"
+                                           required>
+                                </div>
+                                <div class="input-group flex-nowrap mb-3">
+                                    <span class="input-group-text w-25">Email<span class="text-danger mr-1">*</span></span>
+                                    <input type="text"
+                                           class="form-control"
+                                           :class="errors.mailClass"
+                                           id="mailInput" name="mail"
+                                           v-model.trim="userForm.mail"
+                                           disabled
+                                           maxlength="50"
+                                           required>
+                                </div>
+                                <div class="input-group flex-nowrap mb-3">
+                                    <span class="input-group-text w-25">Birthday<span class="text-danger mr-1">*</span></span>
+                                    <input type="text"
+                                           class="form-control"
+                                           :class="errors.birthdayClass"
+                                           id="birthdayInput" name="birthday"
+                                           v-model.trim="userForm.birthday"
+                                           required>
+                                </div>
+                                <div class="input-group flex-nowrap mb-3">
+                                    <span class="input-group-text w-25">Age</span>
+                                    <input type="text" class="form-control" disabled v-model="userForm.age">
+                                </div>
+                                <div class="col-12 d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button
+                                            type="button"
+                                            @Click="cancelEditUserBtn"
+                                            v-show="!formDisabled"
+                                            data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                            title="Cancel edit user"
+                                            class="btn btn-outline-secondary"><i class="fa-solid fa-text-slash"></i></button>
+                                    <button
+                                            type="button"
+                                            v-show="!formDisabled"
+                                            data-bs-toggle="modal" data-bs-target="#ConfirmModal"
+                                            data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                            title="Submit change"
+                                            class="btn btn-outline-primary"><i class="fa-solid fa-check"></i></button>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Modal -->
+        <div class="modal fade" id="ConfirmModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">User confirmation</h5>
+                    </div>
+                    <div class="modal-body">
+                        {{ confirmBoxMessage }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                @Click="showModal = false"
+                                data-bs-dismiss="modal">No</button>
+                        <button type="button"
+                                @Click="submit"
+                                data-bs-dismiss="modal"
+                                class="btn btn-primary">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/js/app.js" type="module"></script>
+</body>
+
+</html>

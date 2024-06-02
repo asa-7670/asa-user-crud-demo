@@ -75,3 +75,9 @@ https://start.spring.io/
 ### Feature 5: Error Handling for REST
 #### Concept to see
     - @RestControllerAdvice
+### Feature 6: VueJs 3, Awesome and Bootstrap
+![](img/index.png)
+#### Concept to see
+    - WebJar for Bootstrap
+    - WebJar for Font Awesome
+    - VueJs 3
