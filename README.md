@@ -81,3 +81,13 @@ https://start.spring.io/
     - WebJar for Bootstrap
     - WebJar for Font Awesome
     - VueJs 3
+### Feature 7: CI-CD : Jenkins, Docker, docker compose, Docker hub
+![](img/jenkins-pipeline.png)
+#### Concept to see (see CID-CD.pdf)
+    - CI-CD
+    - Docker
+    - Docker hub
+    - Docker-compose
+    - Jenkins
+    - Jenkinsfile
+    - pipeline
