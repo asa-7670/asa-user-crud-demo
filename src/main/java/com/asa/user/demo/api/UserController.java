@@ -1,5 +1,6 @@
 package com.asa.user.demo.api;
 
+import com.asa.user.demo.dto.UserDto;
 import com.asa.user.demo.model.UserEntity;
 import com.asa.user.demo.service.UserService;
 import jakarta.validation.Valid;
@@ -65,7 +66,7 @@ public class UserController {
      * @return ResponseEntity<Set<UserEntity>>
      */
     @GetMapping
-    public ResponseEntity<Set<UserEntity>> users() {
+    public ResponseEntity<Set<UserDto>> users() {
         return ResponseEntity.ok().body(this.userService.getUsers());
     }
 
@@ -89,7 +90,7 @@ public class UserController {
     @DeleteMapping("/user/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable @NotNull Long id) {
         this.userService.deleteUserById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.ok().build();
     }
 
     /**
